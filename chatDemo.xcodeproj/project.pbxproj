@@ -15,6 +15,9 @@
 		04E2466923C30B010054F441 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 04E2466723C30B010054F441 /* LaunchScreen.storyboard */; };
 		04E2467423C30B010054F441 /* chatDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E2467323C30B010054F441 /* chatDemoTests.swift */; };
 		04E2467F23C30B010054F441 /* chatDemoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E2467E23C30B010054F441 /* chatDemoUITests.swift */; };
+		04E2468E23C30B8B0054F441 /* TigaseSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04E2468D23C30B8B0054F441 /* TigaseSwift.framework */; };
+		04E2468F23C30B8B0054F441 /* TigaseSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 04E2468D23C30B8B0054F441 /* TigaseSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		04E2469323C30DAE0054F441 /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 04E2469123C30C6F0054F441 /* libresolv.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,6 +37,20 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		04E2469023C30B8C0054F441 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				04E2468F23C30B8B0054F441 /* TigaseSwift.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		04E2465923C30AFF0054F441 /* chatDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = chatDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		04E2465C23C30AFF0054F441 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -49,6 +66,8 @@
 		04E2467A23C30B010054F441 /* chatDemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = chatDemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		04E2467E23C30B010054F441 /* chatDemoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chatDemoUITests.swift; sourceTree = "<group>"; };
 		04E2468023C30B010054F441 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		04E2468D23C30B8B0054F441 /* TigaseSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = TigaseSwift.framework; sourceTree = "<group>"; };
+		04E2469123C30C6F0054F441 /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +75,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				04E2468E23C30B8B0054F441 /* TigaseSwift.framework in Frameworks */,
+				04E2469323C30DAE0054F441 /* libresolv.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -83,6 +104,7 @@
 				04E2467223C30B010054F441 /* chatDemoTests */,
 				04E2467D23C30B010054F441 /* chatDemoUITests */,
 				04E2465A23C30AFF0054F441 /* Products */,
+				04E2468C23C30B8B0054F441 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -128,6 +150,15 @@
 			path = chatDemoUITests;
 			sourceTree = "<group>";
 		};
+		04E2468C23C30B8B0054F441 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				04E2469123C30C6F0054F441 /* libresolv.tbd */,
+				04E2468D23C30B8B0054F441 /* TigaseSwift.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -138,6 +169,7 @@
 				04E2465523C30AFF0054F441 /* Sources */,
 				04E2465623C30AFF0054F441 /* Frameworks */,
 				04E2465723C30AFF0054F441 /* Resources */,
+				04E2469023C30B8C0054F441 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -436,11 +468,18 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = ADP4VPSRLG;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
 				INFOPLIST_FILE = chatDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				OTHER_LDFLAGS = "-lxml2";
 				PRODUCT_BUNDLE_IDENTIFIER = com.james.chatDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -454,11 +493,18 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = ADP4VPSRLG;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
 				INFOPLIST_FILE = chatDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				OTHER_LDFLAGS = "-lxml2";
 				PRODUCT_BUNDLE_IDENTIFIER = com.james.chatDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
