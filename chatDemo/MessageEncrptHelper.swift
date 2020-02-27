@@ -63,7 +63,8 @@ class MessageEncryptHelper{
             }
         }
       
-        private func decrypt(_ userId:String,_ encryptMsg:String) ->String{
+         func decrypt(_ userId:String,_ encryptMsg:String) ->String{
+            initBasicSessionV3()
             let index = encryptMsg.range(of: ".")!.lowerBound;
             let decode_msg_content  = String(encryptMsg[..<index]);
             let pos = index.utf16Offset(in: encryptMsg)+2;
@@ -116,9 +117,9 @@ class MessageEncryptHelper{
 
         }
         
-        private func encrypt(_ senderId:String,_ receiverId:String, _ content:String) -> String{
+         func encrypt(_ senderId:String,_ receiverId:String, _ content:String) -> String{
               
-                
+                initBasicSessionV3()
                 /* Create Alice's session record */
                 let aliceSessionRecord = SessionRecord(state: nil)
 

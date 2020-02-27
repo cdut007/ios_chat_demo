@@ -33,21 +33,77 @@ class ChatModel:NSObject {
         case STATUS_OK=0,STATUS_READ,STATUS_DRAFT,STATUS_DELIVERY_OK,STATUS_FAILURE ,STATUS_IN_PROGRESS
     }
     
+    func insertCustomMessage(chatId:String,from:String,to:String,jsonData:String,conversationType:Int){
+        let uuid = UUID().uuidString
+        let createLocalMsg = ChatStoreDB.shareInstence().createNewMsg(chatId: chatId, from: from, to: to, globalMsgId: uuid, jsonData: jsonData, convsationType: conversationType, errorInfo: "")
+        if(createLocalMsg){
+            ChatStoreDB.shareInstence().updateMsgStatus(globalMsgId:uuid,status: MessageStatus.STATUS_OK.rawValue,timestamp: "")
+        }
+    }
     
-    public func sendCustomMessage(receiverId:String,content:String){
+    func updateMsgBody(globalMsgId: String, body: String) -> Bool{
+        return ChatStoreDB.shareInstence().updateMsgBody(globalMsgId: globalMsgId, body: body)
+    }
+    
+    func updateMsgStatus(globalMsgId: String, status: Int) -> Bool{
+        return ChatStoreDB.shareInstence().updateMsgStatus(globalMsgId: globalMsgId, status: status,timestamp: "")
+    }
+    
+    public func sendCustomMessage(chatId:String,jsonData:String,conversationType:Int){
+        let uuid = UUID().uuidString
+        let createLocalMsg = ChatStoreDB.shareInstence().createNewMsg(chatId: chatId, from: userId, to: chatId, globalMsgId: uuid, jsonData: jsonData, convsationType: conversationType, errorInfo: "")
+        if(createLocalMsg){
+            
+            
+            var recipient = JID(chatId+"_uc@"+domain);
+            if(conversationType == ConversationType.GROUP_CHAT.rawValue){
+                recipient=JID(chatId+"@conference."+domain)
+                let messageModule: MessageModule = client.modulesManager.getModule(MessageModule.ID)!;
+                let chat = messageModule.createChat(with: recipient);
+                print("Sending muc message to", recipient, ".."+chatId);
+                _ = messageModule.sendMessage(in: chat!, body: jsonData,type: StanzaType.groupchat);
+            }else{
+                let messageModule: MessageModule = client.modulesManager.getModule(MessageModule.ID)!;
+                let chat = messageModule.createChat(with: recipient);
+                print("Sending message to", recipient, ".."+chatId);
+               // session: "[private]"
+              //  let encryptedMsg = messageEncryptHelper.encrypt(chatId,userId,jsonData);
+                _ = messageModule.sendMessage(in: chat!, body: jsonData,mechanism: "encrypt");
+            }
+            
+        }
         
-        let messageModule: MessageModule = client.modulesManager.getModule(MessageModule.ID)!;
-        let recipient = JID(receiverId+"_uc@ul");
-        let chat = messageModule.createChat(with: recipient);
-        print("Sending message to", recipient, ".."+receiverId);
-        _ = messageModule.sendMessage(in: chat!, body: content);
         
+    }
+    func getMessageByKeyIdOrGlobalId(keyId:Int,globalMsgId:String) -> NSDictionary?{
+        
+        return ChatStoreDB.shareInstence().getMessageBykeyIdOrGlobalId(keyId: keyId, globalMsgId: globalMsgId)
+    }
+    
+    func getConversationByKeyIdOrGlobalId(keyId:Int,chatId:String) -> NSDictionary?{
+        
+        return ChatStoreDB.shareInstence().getConversationByKeyIdOrGlobalId(keyId: keyId, chatId: chatId)
+    }
+    func createConversationById(chatId:String,convsationType:Int,title:String) -> Bool {
+        return ChatStoreDB.shareInstence().createConversationById(chatId: chatId, convsationType: convsationType, title: title)
+    }
+    
+    func  getMessages(conversationKeyId:Int,msgKeyId:Int,count:Int,prevOrNext:Bool) -> Array<NSDictionary>{
+        return ChatStoreDB.shareInstence().getMessages(conversationKeyId: conversationKeyId, msgKeyId: msgKeyId, count: count, prevOrNext: prevOrNext)
+    }
+    func  getAllConversations() -> Array<NSDictionary>{
+        return ChatStoreDB.shareInstence().getAllConversations()
     }
     
     public func quit(){
         ChatStoreDB.shareInstence().closeDB()
         self.userId = "";
         self.domain="";
+    }
+    
+    func joinGroup(chatId:String){
+        let mucModule: MucModule = client.modulesManager.getModule(MucModule.ID)!;
+        _ = mucModule.join(roomName: chatId, mucServer: "conference."+domain, nickname: userId+"_call");
     }
     
     public func relogin(){
@@ -63,10 +119,12 @@ class ChatModel:NSObject {
         ChatStoreDB.shareInstence().openDB(_userId: userId);
         
         self.userId = userId;
+        self.domain = domain;
         let jid = BareJID(userId+"_uc@"+domain);
         client.connectionConfiguration.setServerHost(imHost);
         client.connectionConfiguration.setServerPort(imPort);
         client.connectionConfiguration.setUserJID(jid);
+        client.sessionObject.setUserProperty(SessionObject.RESOURCE, value: "call")
         client.connectionConfiguration.setUserPassword(token);
         // create and register event handler
         class EventBusHandler: EventHandler {
@@ -77,24 +135,75 @@ class ChatModel:NSObject {
             func messageReceived(_ mr: MessageModule.MessageReceivedEvent) {
                 print("Received signle new message from", mr.message.from, "with text", mr.message.body);
                 let message = mr.message!
-                if((message.body) != nil){
-                    let from = (message.from!.bareJid.localPart!).replacingOccurrences(of: "_uc", with: "");
-                    let to = (message.to!.bareJid.localPart!).replacingOccurrences(of: "_uc", with: "");
-                    ChatStoreDB.shareInstence().createNewMsg(chatId: from, from: from, to: to, globalMsgId: message.id!,  jsonData: message.body!, convsationType: ConversationType.SINGLE_CHAT.rawValue, errorInfo: "")
+                if(message.type == StanzaType.error){
+                    
+                }else{
+                    if((message.body) != nil){
+                        let from = (message.from!.bareJid.localPart!).replacingOccurrences(of: "_uc", with: "");
+                        let to = (message.to!.bareJid.localPart!).replacingOccurrences(of: "_uc", with: "");
+                        ChatStoreDB.shareInstence().createNewMsg(chatId: from, from: from, to: to, globalMsgId: message.id!,  jsonData: message.body!, convsationType: ConversationType.SINGLE_CHAT.rawValue, errorInfo: "")
+                        
+                        
+                    }
                 }
                 
-                //                let text = "test";
-                //                let content = "{\"messageType\":\"TextMessage\",\"messageTypeValue\":1,\"data\":{\"content\":\""+text+"\"},\"messageEncrypt\":\"true\",\"peerInfo\":{\"userName\":\"\",\"mobile\":\"\",\"nickName\":\"\"}}";
-                // _chatModel.sendCustomMessage(receiverId:"zq30695873350b443bbc992c691e525201", content:content);
+                
+                
             }
             func messageMucReceived(_ mr: MucModule.MessageReceivedEvent) {
                 print("Received group new message from", mr.message.from, "with text", mr.message.body);
+                let message = mr.message!
+                if(message.type == StanzaType.error){
+                    
+                }else{
+                    if((message.body) != nil){
+                       
+                    }
+                }
             }
+            func mucRoomJoined(_ event: MucModule.YouJoinedEvent) {
+                
+            }
+            
+            /// Called when session is established
+            func sessionEstablished() {
+                print("Now we are connected to server and session is ready..");
+             
+                
+                let iq = Iq();
+                iq.id = UUID().uuidString
+                iq.from = JID(_chatModel.userId+"_uc@"+_chatModel.domain+"/call")
+                iq.to  =  JID("conference."+_chatModel.domain);
+                iq.type = StanzaType.get;
+                let query = Element(name: "query", xmlns: DiscoveryModule.ITEMS_XMLNS);
+                iq.addChild(query);
+                _chatModel.client.context.writer?.write(iq, timeout: 10, onSuccess: {(response) in
+                   // response received with type equal `result`
+                     print("\(response)")
+                 
+                    let text = "test111";
+                                           let content = "{\"messageType\":\"TextMessage\",\"messageTypeValue\":1,\"data\":{\"content\":\""+text+"\"},\"messageEncrypt\":\"true\",\"peerInfo\":{\"userName\":\"\",\"mobile\":\"\",\"nickName\":\"\"}}";
+                    self._chatModel.sendCustomMessage(chatId:"private-chat-195f0510-119f-4b9c-8c41-14b9b561adb5", jsonData:content,conversationType: ConversationType.GROUP_CHAT.rawValue);
+                    
+                     self._chatModel.sendCustomMessage(chatId:"zq30695873350b443bbc992c691e525201", jsonData:content,conversationType: ConversationType.SINGLE_CHAT.rawValue);
+                 }, onError: {(response, errorCondition) in
+                   // received response with type equal `error`
+                     print("\(response),\(errorCondition)")
+                 }, onTimeout: {
+                   // no response was received in specified time
+                 });
+                
+            }
+            
+            
             func handle(event: Event) {
                 print("event bus handler got event = ", event);
                 switch event {
                 case is SessionEstablishmentModule.SessionEstablishmentSuccessEvent:
                     print("successfully connected to server and authenticated!");
+                    sessionEstablished();
+                case is SocketConnector.DisconnectedEvent:
+                    print("Client is disconnected.");
                 case is RosterModule.ItemUpdatedEvent:
                     print("roster item updated");
                 case is PresenceModule.ContactPresenceChanged:
@@ -107,6 +216,8 @@ class ChatModel:NSObject {
                 case let mucr as MucModule.MessageReceivedEvent:
                     print("received muc message");
                     messageMucReceived(mucr);
+                case let mucr as MucModule.YouJoinedEvent:
+                    mucRoomJoined(mucr);
                 default:
                     // here will enter other events if this handler will be registered for any other events
                     break;
