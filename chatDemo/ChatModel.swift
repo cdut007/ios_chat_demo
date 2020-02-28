@@ -17,6 +17,7 @@ class ChatModel:NSObject {
     var messageEncryptHelper = MessageEncryptHelper();
     public var userId:String = "";
     public var domain:String = "";
+    public var resource:String = "call";
     public var encrypt = false;
     
     enum ConversationType: Int {
@@ -46,23 +47,27 @@ class ChatModel:NSObject {
         self.encrypt = encrypt
     }
     
+    func isLogin() -> Bool{
+        return client.state == SocketConnector.State.connected
+    }
+    
     func deleteConversation(keyId: Int) -> Bool{
-           return ChatStoreDB.shareInstence().deleteConversation(keyId: keyId)
+        return ChatStoreDB.shareInstence().deleteConversation(keyId: keyId)
     }
     
     func deleteMessage(msgKeyId: Int) -> Bool{
-           return ChatStoreDB.shareInstence().deleteMessage(msgKeyId: msgKeyId)
+        return ChatStoreDB.shareInstence().deleteMessage(msgKeyId: msgKeyId)
     }
     
     func messageRead(keyId:Int) -> Bool{
-          return ChatStoreDB.shareInstence().messageRead(keyId: keyId)
+        return ChatStoreDB.shareInstence().messageRead(keyId: keyId)
     }
     func conversationRead(keyId:Int) -> Bool {
         return ChatStoreDB.shareInstence().conversationRead(keyId: keyId)
     }
     
     func deleteAllMessages(conversationKeyId: Int) -> Bool{
-           return ChatStoreDB.shareInstence().deleteAllMessages(conversationKeyId: conversationKeyId)
+        return ChatStoreDB.shareInstence().deleteAllMessages(conversationKeyId: conversationKeyId)
     }
     
     func updateMsgBody(globalMsgId: String, body: String) -> Bool{
@@ -74,15 +79,15 @@ class ChatModel:NSObject {
     }
     
     func setConversationDraft(keyId: Int, draft: String) -> Bool{
-           return ChatStoreDB.shareInstence().setConversationDraft(keyId: keyId, draft: draft)
-       }
+        return ChatStoreDB.shareInstence().setConversationDraft(keyId: keyId, draft: draft)
+    }
     
     func setConversationMute(keyId: Int, mute: Int) -> Bool{
-              return ChatStoreDB.shareInstence().setConversationMute(keyId: keyId, mute: mute)
-          }
+        return ChatStoreDB.shareInstence().setConversationMute(keyId: keyId, mute: mute)
+    }
     func setConversationTopup(keyId: Int, topUp: Int) -> Bool{
-                 return ChatStoreDB.shareInstence().setConversationTopup(keyId: keyId, topUp: topUp)
-             }
+        return ChatStoreDB.shareInstence().setConversationTopup(keyId: keyId, topUp: topUp)
+    }
     
     func updateMsgStatus(globalMsgId: String, status: Int) -> Bool{
         return ChatStoreDB.shareInstence().updateMsgStatus(globalMsgId: globalMsgId, status: status,timestamp: "")
@@ -99,30 +104,30 @@ class ChatModel:NSObject {
     }
     
     public func sendCustomBroadcast(chatId:String,jsonData:String,conversationType:Int){
-           let globalMsgId = UUID().uuidString
-           var session:String?
-                  var mechanism:String?
-                  var receiver = chatId
-                  if chatId.contains("[private]") {
-                      receiver = chatId.replacingOccurrences(of: "[private]", with: "");
-                      session="[private]"
-                  }
-                  var body = jsonData
-                  var recipient = JID(receiver+"_uc@"+domain);
-                  if(conversationType == ConversationType.GROUP_CHAT.rawValue){
-                      recipient=JID(chatId+"@conference."+domain)
-                      let messageModule: MessageModule = client.modulesManager.getModule(MessageModule.ID)!;
-                      let chat = messageModule.createChat(with: recipient);
-                      print("Sending muc message to", recipient, ".."+chatId);
-                      _ = messageModule.sendBroadcast(in: chat!, body: body,type: StanzaType.groupchat,uuid: globalMsgId);
-                  }else{
-                      let messageModule: MessageModule = client.modulesManager.getModule(MessageModule.ID)!;
-                      let chat = messageModule.createChat(with: recipient);
-                      print("Sending message to", recipient, ".."+chatId);
-                      _ = messageModule.sendBroadcast(in: chat!, body: body,mechanism: mechanism,session: session,uuid:globalMsgId);
-                  }
-           
-       }
+        let globalMsgId = UUID().uuidString
+        var session:String?
+        var mechanism:String?
+        var receiver = chatId
+        if chatId.contains("[private]") {
+            receiver = chatId.replacingOccurrences(of: "[private]", with: "");
+            session="[private]"
+        }
+        var body = jsonData
+        var recipient = JID(receiver+"_uc@"+domain);
+        if(conversationType == ConversationType.GROUP_CHAT.rawValue){
+            recipient=JID(chatId+"@conference."+domain)
+            let messageModule: MessageModule = client.modulesManager.getModule(MessageModule.ID)!;
+            let chat = messageModule.createChat(with: recipient);
+            print("Sending muc message to", recipient, ".."+chatId);
+            _ = messageModule.sendBroadcast(in: chat!, body: body,type: StanzaType.groupchat,uuid: globalMsgId);
+        }else{
+            let messageModule: MessageModule = client.modulesManager.getModule(MessageModule.ID)!;
+            let chat = messageModule.createChat(with: recipient);
+            print("Sending message to", recipient, ".."+chatId);
+            _ = messageModule.sendBroadcast(in: chat!, body: body,mechanism: mechanism,session: session,uuid:globalMsgId);
+        }
+        
+    }
     
     public func resendCustomMessage(globalMsgId:String,jsonData:String,conversationType:Int){
         if updateMsgStatus(globalMsgId: globalMsgId, status: MessageStatus.STATUS_IN_PROGRESS.rawValue) {
@@ -191,42 +196,123 @@ class ChatModel:NSObject {
     
     func joinGroup(chatId:String){
         let mucModule: MucModule = client.modulesManager.getModule(MucModule.ID)!;
-        _ = mucModule.join(roomName: chatId, mucServer: "conference."+domain, nickname: userId+"_call");
+        _ = mucModule.join(roomName: chatId, mucServer: "conference."+domain, nickname: userId+"_"+resource);
     }
     
     func checkGroupMember(chatId:String){
         
-//        "<iq id=\"1\" type=\"get\" to=\"" + groupId + "@conference." + SERVER_NAME + "\" xmlns:cli=\"jabber:client\">\n" +
-//           "        <query xmlns=\"http://jabber.org/protocol/muc#user\">\n" +
-//           "        <item affiliation=\"member\"/>\n" +
-//           "        </query>\n" +
-//           "        </iq>";
-       }
+        let iq = Iq();
+        iq.id = UUID().uuidString
+        iq.to  =  JID(chatId+"@conference."+domain);
+        iq.type = StanzaType.get;
+        let query = Element(name: "query", xmlns: "http://jabber.org/protocol/muc#user");
+        let item = Element(name: "item");
+        item.setAttribute("affiliation", value: "member")
+        query.addChild(item)
+        iq.addChild(query);
+        client.context.writer?.write(iq, timeout: 10, onSuccess: {(response) in
+            // response received with type equal `result`
+            let iqStanza = response
+           
+            print("checkGroupMember:\(response)")
+            
+        }, onError: {(response, errorCondition) in
+            // received response with type equal `error`
+            print("\(response),\(errorCondition)")
+        }, onTimeout: {
+            // no response was received in specified time
+        });
+    }
     
-   
+    //read ,delivered
+    func sendMsgAck(status:String) {
+       //<message xml:lang='*' to='zq68dcd47436c141ee817aa9d32f4f03cc_uc@ul/call' from='zq5ad56d5f981e44a58d7c48ac0bcc564e_uc@ul/call' type='chat'>
+        // <x xmlns='jabber:x:event'>
+        // <read/>
+        // <msgid>63efe617-01dc-4236-a202-9ff06dbe4a97</msgid>
+        // <timestamp/>
+        // </x>
+        // </message>
+    }
+    
+    func createGroup(chatId:String)  {
+//       " <iq type=\"set\" to=\"" + chatId + "@conference." + SERVER_NAME + "\" id=\"" + uuid + "\" xmlns:cli=\"jabber:client\">\n" +
+//       "    \t<query xmlns=\"http://jabber.org/protocol/muc#owner\">\n" +
+//       "    \t<x xmlns=\"jabber:x:data\" type=\"submit\">\n" +
+//       "    \t<field var=\"FORM_TYPE\">\n" +
+//       "    \t<value>http://jabber.org/protocol/muc#roomconfig</value>\n" +
+//       "    \t</field>\n" +
+//       "    \t<field var=\"muc#roomconfig_roomname\">\n" +
+//       "    \t<value>" + roomName + "</value>\n" +
+//       "    \t</field>\n" +
+//       "    \t<field var=\"muc#roomconfig_persistentroom\">\n" +
+//       "    \t<value>1</value>\n" +
+//       "    \t</field>\n" +
+//       "    \t</x>\n" +
+//       "    \t</query>\n" +
+//       "    \t</iq>";
+    }
+    
     
     func inviteToGroup(chatId:String, memberId:String){
-//       "<message to=\"" + groupId + "@conference." + SERVER_NAME + "\" type=\"normal\" xmlns:cli=\"jabber:client\">\n" +
-//       "    \t<x xmlns=\"http://jabber.org/protocol/muc#user\">\n" +
-//       "    \t<invite to=\"" + member + "_uc@" + SERVER_NAME + "/call\">\n" +
-//       "    \t<reason>invite</reason>\n" +
-//       "    \t</invite>\n" +
-//       "    \t</x>\n" +
-//       "    \t</message>";
-       }
+        let inviteMsg = Message();
+        inviteMsg.to  =  JID(chatId+"@conference."+domain);
+        inviteMsg.from = JID(userId+"_uc@"+domain+"/"+resource);
+        inviteMsg.type = StanzaType.normal;
+        inviteMsg.setAttribute("type", value: "normal")
+        inviteMsg.setAttribute("xmlns", value: "jabber:client")
+        let x = Element(name: "x", xmlns: "http://jabber.org/protocol/muc#user");
+        let invite = Element(name: "invite");
+        invite.setAttribute("to", value: memberId+"_uc@"+domain+"/"+resource)
+        let reason = Element(name: "reason", cdata:"invite");
+        invite.addChild(reason)
+        x.addChild(invite)
+        inviteMsg.addChild(x);
+        client.context.writer?.write(inviteMsg, timeout: 10, onSuccess: {(response) in
+            // response received with type equal `result`
+            print("inviteToGroup:\(response)")
+            
+        }, onError: {(response, errorCondition) in
+            // received response with type equal `error`
+            print("\(response),\(errorCondition)")
+        }, onTimeout: {
+            // no response was received in specified time
+        });
+    }
     
     func kickGroupMember(chatId:String, memberId:String){
-//            <iq to=\"" + groupId + "@conference." + SERVER_NAME + "\" type=\"set\" xmlns:cli=\"jabber:client\">\n" +
-//            "    \t<query kick=\"true\" xmlns=\"http://jabber.org/protocol/muc#admin\">\n" +
-//            "    \t<item jid=\"" + member + "_uc@ul/call" + "\" role=\"none\">\n" +
-//            "    \t<reason>LeaveMuc</reason>\n" +
-//            "    \t</item>\n" +
-//            "    \t</query>\n" +
-//            "    \t</iq>";
-          }
+    
+        let iq = Iq();
+        iq.id = UUID().uuidString
+        iq.to  =  JID(chatId+"@conference."+domain);
+        iq.type = StanzaType.set;
+        let query = Element(name: "query", xmlns: "http://jabber.org/protocol/muc#admin");
+        query.setAttribute("kick", value: "true")
+        let item = Element(name: "item");
+        item.setAttribute("jid", value: "\(memberId)_uc@\(domain)/"+resource)
+        item.setAttribute("role", value: "none")
+        let reason = Element(name: "reason");
+        reason.value="LeaveMuc"
+        item.addChild(reason)
+        query.addChild(item)
+        iq.addChild(query);
+        client.context.writer?.write(iq, timeout: 10, onSuccess: {(response) in
+            // response received with type equal `result`
+            print("kickGroupMember:\(response)")
+            
+        }, onError: {(response, errorCondition) in
+            // received response with type equal `error`
+            print("\(response),\(errorCondition)")
+        }, onTimeout: {
+            // no response was received in specified time
+        });
+    }
     
     public func relogin(){
         if(true){//sdk inited
+            var loginData = Dictionary<String, String>()
+            loginData["status"] = "connecting"
+            ChatStoreDB.shareInstence().postNotifition(actName: "LoginStatusChangedNotify",data:loginData as NSDictionary)
             client.login();
         }else{
             print("im sdk初始化失败，login failed");
@@ -243,7 +329,7 @@ class ChatModel:NSObject {
         client.connectionConfiguration.setServerHost(imHost);
         client.connectionConfiguration.setServerPort(imPort);
         client.connectionConfiguration.setUserJID(jid);
-        client.sessionObject.setUserProperty(SessionObject.RESOURCE, value: "call")
+        client.sessionObject.setUserProperty(SessionObject.RESOURCE, value: resource)
         client.connectionConfiguration.setUserPassword(token);
         // create and register event handler
         class EventBusHandler: EventHandler {
@@ -257,8 +343,8 @@ class ChatModel:NSObject {
                 if(message.type == StanzaType.error){
                     
                 }else if(message.broadcast != nil){
-                      print("Received signle new message from", mr.message.from, "with broadcast", mr.message.broadcast);
-                      let broadcast = message.broadcast!
+                    print("Received signle new message from", mr.message.from, "with broadcast", mr.message.broadcast);
+                    let broadcast = message.broadcast!
                     var session = message.session
                     if  session == nil {
                         session = ""
@@ -270,8 +356,8 @@ class ChatModel:NSObject {
                     broadcastData["broadcast"] = broadcast
                     ChatStoreDB.shareInstence().postNotifition(actName: "BroadcastChangedNotify",data:broadcastData as NSDictionary)
                 }else{
-                    if((message.body) != nil){
-                          print("Received signle new message from", mr.message.from, "with text", mr.message.body);
+                    if((message.body) != nil && message.type == StanzaType.chat){
+                        print("Received signle new message from", mr.message.from, "with text", mr.message.body);
                         let from = (message.from!.bareJid.localPart!).replacingOccurrences(of: "_uc", with: "");
                         let to = (message.to!.bareJid.localPart!).replacingOccurrences(of: "_uc", with: "");
                         storeMsg(message: message, from: from, to: to, conversationType: ConversationType.SINGLE_CHAT.rawValue)
@@ -280,12 +366,16 @@ class ChatModel:NSObject {
                 
             }
             func storeMsg(message:TigaseSwift.Message ,from:String,to:String, conversationType:Int) {
-               var session = message.session
+                var session = message.session
                 if  session == nil {
                     session = ""
                 }
                 if message.mechanism != nil {
                     message.body = _chatModel.messageEncryptHelper.decrypt(_chatModel.userId, message.body!)
+                }
+                
+                if(message.body == nil || message.body!.isEmpty){
+                    return
                 }
                 ChatStoreDB.shareInstence().createNewMsg(chatId: from+session!, from: from, to: to, globalMsgId: message.id!,  jsonData: message.body!, convsationType: conversationType, errorInfo: "")
             }
@@ -296,7 +386,7 @@ class ChatModel:NSObject {
                 if(message.type == StanzaType.error){
                     
                 }else{
-                    if((message.body) != nil){
+                    if((message.body) != nil && message.type == StanzaType.groupchat){
                         let from = (message.from!.bareJid.localPart!).replacingOccurrences(of: "_uc", with: "");
                         let to = (message.to!.bareJid.localPart!).replacingOccurrences(of: "_uc", with: "");
                         storeMsg(message: message, from: from, to: to, conversationType: ConversationType.GROUP_CHAT.rawValue)
@@ -310,11 +400,16 @@ class ChatModel:NSObject {
             /// Called when session is established
             func sessionEstablished() {
                 print("Now we are connected to server and session is ready..");
-                
+                var loginData = Dictionary<String, String>()
+                loginData["status"] = "connected"
+                ChatStoreDB.shareInstence().postNotifition(actName: "LoginStatusChangedNotify",data:loginData as NSDictionary)
+                let presenceModule: PresenceModule = _chatModel.client.modulesManager.getModule(PresenceModule.ID)!;
+                print("Setting presence to Online...");
+                presenceModule.setPresence(show: Presence.Show.online, status: "Online", priority: 0);
                 
                 let iq = Iq();
                 iq.id = UUID().uuidString
-                iq.from = JID(_chatModel.userId+"_uc@"+_chatModel.domain+"/call")
+                iq.from = JID(_chatModel.userId+"_uc@"+_chatModel.domain+"/"+_chatModel.resource)
                 iq.to  =  JID("conference."+_chatModel.domain);
                 iq.type = StanzaType.get;
                 let query = Element(name: "query", xmlns: DiscoveryModule.ITEMS_XMLNS);
@@ -322,7 +417,8 @@ class ChatModel:NSObject {
                 _chatModel.client.context.writer?.write(iq, timeout: 10, onSuccess: {(response) in
                     // response received with type equal `result`
                     print("\(response)")
-                  
+                     
+                    
                 }, onError: {(response, errorCondition) in
                     // received response with type equal `error`
                     print("\(response),\(errorCondition)")
@@ -341,6 +437,9 @@ class ChatModel:NSObject {
                     sessionEstablished();
                 case is SocketConnector.DisconnectedEvent:
                     print("Client is disconnected.");
+                    var loginData = Dictionary<String, String>()
+                    loginData["status"] = "connected"
+                    ChatStoreDB.shareInstence().postNotifition(actName: "LoginStatusChangedNotify",data:loginData as NSDictionary)
                 case is RosterModule.ItemUpdatedEvent:
                     print("roster item updated");
                 case is PresenceModule.ContactPresenceChanged:
@@ -363,7 +462,7 @@ class ChatModel:NSObject {
         }
         
         let eventHandler = EventBusHandler(chatModel: self);
-        client.eventBus.register(handler: eventHandler, for: SessionEstablishmentModule.SessionEstablishmentSuccessEvent.TYPE, RosterModule.ItemUpdatedEvent.TYPE, PresenceModule.ContactPresenceChanged.TYPE, MessageModule.MessageReceivedEvent.TYPE, MessageModule.ChatCreatedEvent.TYPE,MucModule.YouJoinedEvent.TYPE, MucModule.MessageReceivedEvent.TYPE, MucModule.OccupantComesEvent.TYPE, MucModule.OccupantLeavedEvent.TYPE, MucModule.OccupantChangedPresenceEvent.TYPE);
+        client.eventBus.register(handler: eventHandler, for: SessionEstablishmentModule.SessionEstablishmentSuccessEvent.TYPE, RosterModule.ItemUpdatedEvent.TYPE, PresenceModule.ContactPresenceChanged.TYPE, MessageModule.MessageReceivedEvent.TYPE, MessageModule.ChatCreatedEvent.TYPE,MucModule.YouJoinedEvent.TYPE, MucModule.MessageReceivedEvent.TYPE, MucModule.OccupantComesEvent.TYPE, MucModule.OccupantLeavedEvent.TYPE, MucModule.OccupantChangedPresenceEvent.TYPE,SocketConnector.DisconnectedEvent.TYPE);
         print("Notifying event but that we are interested in some of MucModule events");
         
         print("Connecting to server..")

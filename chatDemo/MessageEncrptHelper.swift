@@ -117,6 +117,13 @@ class MessageEncryptHelper{
 
         }
         
+    private func convertUtf8Str(_ text:String)->UnsafePointer<Int8>?{
+           
+           let nsStr = text as NSString
+           let cstr =   nsStr.utf8String
+           return cstr
+       }
+    
          func encrypt(_ senderId:String,_ receiverId:String, _ content:String) -> String{
               
                 initBasicSessionV3()
@@ -144,7 +151,7 @@ class MessageEncryptHelper{
                        try bobStore.sessionStore.store(session: a2 , for: bobAddress)
                        let aliceCipher = SessionCipher(store: aliceStore, remoteAddress: aliceAddress)
                        let aliceMessage = try aliceCipher.encrypt(content.data(using: .utf8)!)
-                       let encryptBase64Data = aliceMessage.data.base64EncodedString()
+                    let encryptBase64Data = aliceMessage.protoData().base64EncodedString()
     //                 let bytes = [UInt8](aliceMessage.data)
     //                 let intArray = bytes.map { Int8(bitPattern: $0) }
                     
