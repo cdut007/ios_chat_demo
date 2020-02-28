@@ -194,6 +194,37 @@ class ChatModel:NSObject {
         _ = mucModule.join(roomName: chatId, mucServer: "conference."+domain, nickname: userId+"_call");
     }
     
+    func checkGroupMember(chatId:String){
+        
+//        "<iq id=\"1\" type=\"get\" to=\"" + groupId + "@conference." + SERVER_NAME + "\" xmlns:cli=\"jabber:client\">\n" +
+//           "        <query xmlns=\"http://jabber.org/protocol/muc#user\">\n" +
+//           "        <item affiliation=\"member\"/>\n" +
+//           "        </query>\n" +
+//           "        </iq>";
+       }
+    
+   
+    
+    func inviteToGroup(chatId:String, memberId:String){
+//       "<message to=\"" + groupId + "@conference." + SERVER_NAME + "\" type=\"normal\" xmlns:cli=\"jabber:client\">\n" +
+//       "    \t<x xmlns=\"http://jabber.org/protocol/muc#user\">\n" +
+//       "    \t<invite to=\"" + member + "_uc@" + SERVER_NAME + "/call\">\n" +
+//       "    \t<reason>invite</reason>\n" +
+//       "    \t</invite>\n" +
+//       "    \t</x>\n" +
+//       "    \t</message>";
+       }
+    
+    func kickGroupMember(chatId:String, memberId:String){
+//            <iq to=\"" + groupId + "@conference." + SERVER_NAME + "\" type=\"set\" xmlns:cli=\"jabber:client\">\n" +
+//            "    \t<query kick=\"true\" xmlns=\"http://jabber.org/protocol/muc#admin\">\n" +
+//            "    \t<item jid=\"" + member + "_uc@ul/call" + "\" role=\"none\">\n" +
+//            "    \t<reason>LeaveMuc</reason>\n" +
+//            "    \t</item>\n" +
+//            "    \t</query>\n" +
+//            "    \t</iq>";
+          }
+    
     public func relogin(){
         if(true){//sdk inited
             client.login();
@@ -291,6 +322,7 @@ class ChatModel:NSObject {
                 _chatModel.client.context.writer?.write(iq, timeout: 10, onSuccess: {(response) in
                     // response received with type equal `result`
                     print("\(response)")
+                  
                 }, onError: {(response, errorCondition) in
                     // received response with type equal `error`
                     print("\(response),\(errorCondition)")
