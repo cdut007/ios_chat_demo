@@ -17,6 +17,7 @@ class ChatModel:NSObject {
     var messageEncryptHelper = MessageEncryptHelper();
     public var userId:String = "";
     public var domain:String = "";
+    public var encrypt = false;
     
     enum ConversationType: Int {
         case SINGLE_CHAT = 1, GROUP_CHAT, SYSTEM_CHAT
@@ -41,9 +42,47 @@ class ChatModel:NSObject {
         }
     }
     
+    func setEncrypt(encrypt:Bool){
+        self.encrypt = encrypt
+    }
+    
+    func deleteConversation(keyId: Int) -> Bool{
+           return ChatStoreDB.shareInstence().deleteConversation(keyId: keyId)
+    }
+    
+    func deleteMessage(msgKeyId: Int) -> Bool{
+           return ChatStoreDB.shareInstence().deleteMessage(msgKeyId: msgKeyId)
+    }
+    
+    func messageRead(keyId:Int) -> Bool{
+          return ChatStoreDB.shareInstence().messageRead(keyId: keyId)
+    }
+    func conversationRead(keyId:Int) -> Bool {
+        return ChatStoreDB.shareInstence().conversationRead(keyId: keyId)
+    }
+    
+    func deleteAllMessages(conversationKeyId: Int) -> Bool{
+           return ChatStoreDB.shareInstence().deleteAllMessages(conversationKeyId: conversationKeyId)
+    }
+    
     func updateMsgBody(globalMsgId: String, body: String) -> Bool{
         return ChatStoreDB.shareInstence().updateMsgBody(globalMsgId: globalMsgId, body: body)
     }
+    
+    func updateConversationBody(keyId: Int, body: String) -> Bool{
+        return ChatStoreDB.shareInstence().updateConversationBody(keyId: keyId, body: body)
+    }
+    
+    func setConversationDraft(keyId: Int, draft: String) -> Bool{
+           return ChatStoreDB.shareInstence().setConversationDraft(keyId: keyId, draft: draft)
+       }
+    
+    func setConversationMute(keyId: Int, mute: Int) -> Bool{
+              return ChatStoreDB.shareInstence().setConversationMute(keyId: keyId, mute: mute)
+          }
+    func setConversationTopup(keyId: Int, topUp: Int) -> Bool{
+                 return ChatStoreDB.shareInstence().setConversationTopup(keyId: keyId, topUp: topUp)
+             }
     
     func updateMsgStatus(globalMsgId: String, status: Int) -> Bool{
         return ChatStoreDB.shareInstence().updateMsgStatus(globalMsgId: globalMsgId, status: status,timestamp: "")
@@ -53,28 +92,77 @@ class ChatModel:NSObject {
         let uuid = UUID().uuidString
         let createLocalMsg = ChatStoreDB.shareInstence().createNewMsg(chatId: chatId, from: userId, to: chatId, globalMsgId: uuid, jsonData: jsonData, convsationType: conversationType, errorInfo: "")
         if(createLocalMsg){
+            sendingCustomMessage(chatId: chatId, jsonData: jsonData, conversationType: conversationType,globalMsgId: uuid)
             
-            
-            var recipient = JID(chatId+"_uc@"+domain);
-            if(conversationType == ConversationType.GROUP_CHAT.rawValue){
-                recipient=JID(chatId+"@conference."+domain)
-                let messageModule: MessageModule = client.modulesManager.getModule(MessageModule.ID)!;
-                let chat = messageModule.createChat(with: recipient);
-                print("Sending muc message to", recipient, ".."+chatId);
-                _ = messageModule.sendMessage(in: chat!, body: jsonData,type: StanzaType.groupchat);
-            }else{
-                let messageModule: MessageModule = client.modulesManager.getModule(MessageModule.ID)!;
-                let chat = messageModule.createChat(with: recipient);
-                print("Sending message to", recipient, ".."+chatId);
-               // session: "[private]"
-              //  let encryptedMsg = messageEncryptHelper.encrypt(chatId,userId,jsonData);
-                _ = messageModule.sendMessage(in: chat!, body: jsonData,mechanism: "encrypt");
+        }
+        
+    }
+    
+    public func sendCustomBroadcast(chatId:String,jsonData:String,conversationType:Int){
+           let globalMsgId = UUID().uuidString
+           var session:String?
+                  var mechanism:String?
+                  var receiver = chatId
+                  if chatId.contains("[private]") {
+                      receiver = chatId.replacingOccurrences(of: "[private]", with: "");
+                      session="[private]"
+                  }
+                  var body = jsonData
+                  var recipient = JID(receiver+"_uc@"+domain);
+                  if(conversationType == ConversationType.GROUP_CHAT.rawValue){
+                      recipient=JID(chatId+"@conference."+domain)
+                      let messageModule: MessageModule = client.modulesManager.getModule(MessageModule.ID)!;
+                      let chat = messageModule.createChat(with: recipient);
+                      print("Sending muc message to", recipient, ".."+chatId);
+                      _ = messageModule.sendBroadcast(in: chat!, body: body,type: StanzaType.groupchat,uuid: globalMsgId);
+                  }else{
+                      let messageModule: MessageModule = client.modulesManager.getModule(MessageModule.ID)!;
+                      let chat = messageModule.createChat(with: recipient);
+                      print("Sending message to", recipient, ".."+chatId);
+                      _ = messageModule.sendBroadcast(in: chat!, body: body,mechanism: mechanism,session: session,uuid:globalMsgId);
+                  }
+           
+       }
+    
+    public func resendCustomMessage(globalMsgId:String,jsonData:String,conversationType:Int){
+        if updateMsgStatus(globalMsgId: globalMsgId, status: MessageStatus.STATUS_IN_PROGRESS.rawValue) {
+            let message = getMessageByKeyIdOrGlobalId(keyId: -1, globalMsgId: globalMsgId)
+            if(message != nil){
+                sendingCustomMessage(chatId: message!["convsationId"] as! String, jsonData: jsonData, conversationType: conversationType,globalMsgId: message!["messageId"] as! String)
             }
-            
         }
         
         
     }
+    
+    private func sendingCustomMessage( chatId:String,jsonData:String,conversationType:Int,globalMsgId:String){
+        var session:String?
+        var mechanism:String?
+        var receiver = chatId
+        if chatId.contains("[private]") {
+            receiver = chatId.replacingOccurrences(of: "[private]", with: "");
+            session="[private]"
+        }
+        var body = jsonData
+        var recipient = JID(receiver+"_uc@"+domain);
+        if(conversationType == ConversationType.GROUP_CHAT.rawValue){
+            recipient=JID(chatId+"@conference."+domain)
+            let messageModule: MessageModule = client.modulesManager.getModule(MessageModule.ID)!;
+            let chat = messageModule.createChat(with: recipient);
+            print("Sending muc message to", recipient, ".."+chatId);
+            _ = messageModule.sendMessage(in: chat!, body: body,type: StanzaType.groupchat,uuid: globalMsgId);
+        }else{
+            let messageModule: MessageModule = client.modulesManager.getModule(MessageModule.ID)!;
+            let chat = messageModule.createChat(with: recipient);
+            print("Sending message to", recipient, ".."+chatId);
+            if(encrypt){
+                mechanism = "encrypt"
+                body = messageEncryptHelper.encrypt(chatId,userId,jsonData);
+            }
+            _ = messageModule.sendMessage(in: chat!, body: body,mechanism: mechanism,session: session,uuid:globalMsgId);
+        }
+    }
+    
     func getMessageByKeyIdOrGlobalId(keyId:Int,globalMsgId:String) -> NSDictionary?{
         
         return ChatStoreDB.shareInstence().getMessageBykeyIdOrGlobalId(keyId: keyId, globalMsgId: globalMsgId)
@@ -137,19 +225,40 @@ class ChatModel:NSObject {
                 let message = mr.message!
                 if(message.type == StanzaType.error){
                     
+                }else if(message.broadcast != nil){
+                      print("Received signle new message from", mr.message.from, "with broadcast", mr.message.broadcast);
+                      let broadcast = message.broadcast!
+                    var session = message.session
+                    if  session == nil {
+                        session = ""
+                    }
+                    let from = (message.from!.bareJid.localPart!).replacingOccurrences(of: "_uc", with: "");
+                    let chatId = from+session!
+                    var broadcastData = Dictionary<String, String>()
+                    broadcastData["chatId"] = chatId
+                    broadcastData["broadcast"] = broadcast
+                    ChatStoreDB.shareInstence().postNotifition(actName: "BroadcastChangedNotify",data:broadcastData as NSDictionary)
                 }else{
                     if((message.body) != nil){
+                          print("Received signle new message from", mr.message.from, "with text", mr.message.body);
                         let from = (message.from!.bareJid.localPart!).replacingOccurrences(of: "_uc", with: "");
                         let to = (message.to!.bareJid.localPart!).replacingOccurrences(of: "_uc", with: "");
-                        ChatStoreDB.shareInstence().createNewMsg(chatId: from, from: from, to: to, globalMsgId: message.id!,  jsonData: message.body!, convsationType: ConversationType.SINGLE_CHAT.rawValue, errorInfo: "")
-                        
-                        
+                        storeMsg(message: message, from: from, to: to, conversationType: ConversationType.SINGLE_CHAT.rawValue)
                     }
                 }
                 
-                
-                
             }
+            func storeMsg(message:TigaseSwift.Message ,from:String,to:String, conversationType:Int) {
+               var session = message.session
+                if  session == nil {
+                    session = ""
+                }
+                if message.mechanism != nil {
+                    message.body = _chatModel.messageEncryptHelper.decrypt(_chatModel.userId, message.body!)
+                }
+                ChatStoreDB.shareInstence().createNewMsg(chatId: from+session!, from: from, to: to, globalMsgId: message.id!,  jsonData: message.body!, convsationType: conversationType, errorInfo: "")
+            }
+            
             func messageMucReceived(_ mr: MucModule.MessageReceivedEvent) {
                 print("Received group new message from", mr.message.from, "with text", mr.message.body);
                 let message = mr.message!
@@ -157,7 +266,9 @@ class ChatModel:NSObject {
                     
                 }else{
                     if((message.body) != nil){
-                       
+                        let from = (message.from!.bareJid.localPart!).replacingOccurrences(of: "_uc", with: "");
+                        let to = (message.to!.bareJid.localPart!).replacingOccurrences(of: "_uc", with: "");
+                        storeMsg(message: message, from: from, to: to, conversationType: ConversationType.GROUP_CHAT.rawValue)
                     }
                 }
             }
@@ -168,7 +279,7 @@ class ChatModel:NSObject {
             /// Called when session is established
             func sessionEstablished() {
                 print("Now we are connected to server and session is ready..");
-             
+                
                 
                 let iq = Iq();
                 iq.id = UUID().uuidString
@@ -178,20 +289,14 @@ class ChatModel:NSObject {
                 let query = Element(name: "query", xmlns: DiscoveryModule.ITEMS_XMLNS);
                 iq.addChild(query);
                 _chatModel.client.context.writer?.write(iq, timeout: 10, onSuccess: {(response) in
-                   // response received with type equal `result`
-                     print("\(response)")
-                 
-                    let text = "test111";
-                                           let content = "{\"messageType\":\"TextMessage\",\"messageTypeValue\":1,\"data\":{\"content\":\""+text+"\"},\"messageEncrypt\":\"true\",\"peerInfo\":{\"userName\":\"\",\"mobile\":\"\",\"nickName\":\"\"}}";
-                    self._chatModel.sendCustomMessage(chatId:"private-chat-195f0510-119f-4b9c-8c41-14b9b561adb5", jsonData:content,conversationType: ConversationType.GROUP_CHAT.rawValue);
-                    
-                     self._chatModel.sendCustomMessage(chatId:"zq30695873350b443bbc992c691e525201", jsonData:content,conversationType: ConversationType.SINGLE_CHAT.rawValue);
-                 }, onError: {(response, errorCondition) in
-                   // received response with type equal `error`
-                     print("\(response),\(errorCondition)")
-                 }, onTimeout: {
-                   // no response was received in specified time
-                 });
+                    // response received with type equal `result`
+                    print("\(response)")
+                }, onError: {(response, errorCondition) in
+                    // received response with type equal `error`
+                    print("\(response),\(errorCondition)")
+                }, onTimeout: {
+                    // no response was received in specified time
+                });
                 
             }
             

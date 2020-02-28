@@ -590,8 +590,8 @@
             filePath = "chatDemo/ChatModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "216"
-            endingLineNumber = "216"
+            startingLineNumber = "327"
+            endingLineNumber = "327"
             landmarkName = "handle(event:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -606,8 +606,8 @@
             filePath = "chatDemo/ChatModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "244"
-            endingLineNumber = "244"
+            startingLineNumber = "355"
+            endingLineNumber = "355"
             landmarkName = "login(userId:token:imHost:imPort:domain:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -622,8 +622,8 @@
             filePath = "chatDemo/ChatStore.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "504"
-            endingLineNumber = "504"
+            startingLineNumber = "617"
+            endingLineNumber = "617"
             landmarkName = "createNewMsg(chatId:from:to:globalMsgId:jsonData:convsationType:errorInfo:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -638,8 +638,8 @@
             filePath = "chatDemo/ChatStore.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "507"
-            endingLineNumber = "507"
+            startingLineNumber = "620"
+            endingLineNumber = "620"
             landmarkName = "createNewMsg(chatId:from:to:globalMsgId:jsonData:convsationType:errorInfo:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -670,8 +670,8 @@
             filePath = "chatDemo/ChatStore.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "516"
-            endingLineNumber = "516"
+            startingLineNumber = "629"
+            endingLineNumber = "629"
             landmarkName = "getDictionaryFromJSONString(jsonString:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -830,8 +830,8 @@
             filePath = "chatDemo/ChatModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "143"
-            endingLineNumber = "143"
+            startingLineNumber = "249"
+            endingLineNumber = "249"
             landmarkName = "messageReceived(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -846,58 +846,10 @@
             filePath = "chatDemo/ChatModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "190"
-            endingLineNumber = "190"
+            startingLineNumber = "301"
+            endingLineNumber = "301"
             landmarkName = "sessionEstablished()"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "567C8BCF-644C-4F76-8FF5-2076977B801B"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "chatDemo/ChatModel.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "181"
-            endingLineNumber = "181"
-            landmarkName = "sessionEstablished()"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "567C8BCF-644C-4F76-8FF5-2076977B801B - b3dff225bd62de87"
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (TigaseSwift.Stanza) -&gt; () in sessionEstablished() -&gt; () in EventBusHandler #1 in chatDemo.ChatModel.login(userId: Swift.String, token: Swift.String, imHost: Swift.String, imPort: Swift.Int, domain: Swift.String) -&gt; Swift.Bool"
-                  moduleName = "chatDemo"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/mac/Documents/work/chatDemo/chatDemo/ChatModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "180"
-                  endingLineNumber = "180"
-                  offsetFromSymbolStart = "48">
-               </Location>
-               <Location
-                  uuid = "567C8BCF-644C-4F76-8FF5-2076977B801B - d58db6ee3f2bc502"
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 (TigaseSwift.Stanza, Swift.Optional&lt;TigaseSwift.ErrorCondition&gt;) -&gt; () in sessionEstablished() -&gt; () in EventBusHandler #1 in chatDemo.ChatModel.login(userId: Swift.String, token: Swift.String, imHost: Swift.String, imPort: Swift.Int, domain: Swift.String) -&gt; Swift.Bool"
-                  moduleName = "chatDemo"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/mac/Documents/work/chatDemo/chatDemo/ChatModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "182"
-                  endingLineNumber = "182"
-                  offsetFromSymbolStart = "88">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -910,8 +862,8 @@
             filePath = "chatDemo/ChatModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "193"
-            endingLineNumber = "193"
+            startingLineNumber = "304"
+            endingLineNumber = "304"
             landmarkName = "sessionEstablished()"
             landmarkType = "7">
          </BreakpointContent>
@@ -919,16 +871,48 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "7DBFD54E-2B81-448A-9DA6-CD561A81304E"
-            shouldBeEnabled = "Yes"
+            uuid = "0C38EDEA-24C5-4EC7-BE17-86A8ED67BBE5"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "chatDemo/ChatStore.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "275"
+            endingLineNumber = "275"
+            landmarkName = "createConversationById(chatId:convsationType:title:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D6C45021-27F6-46B9-B12D-082194846AD0"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "chatDemo/ChatStore.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "284"
+            endingLineNumber = "284"
+            landmarkName = "createConversationById(chatId:convsationType:title:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "50B0F564-B03E-4520-919C-4DACA5F05B6B"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "chatDemo/ChatModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "182"
-            endingLineNumber = "182"
-            landmarkName = "sessionEstablished()"
+            startingLineNumber = "244"
+            endingLineNumber = "244"
+            landmarkName = "messageReceived(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

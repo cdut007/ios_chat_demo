@@ -66,7 +66,7 @@ class ChatStoreDB: NSObject {
         var info = sqlite3_column_text(queryStatement, index)
         if info != nil {
             let content = String(cString: info!)
-             return content
+            return content
         }
         return ""
     }
@@ -90,7 +90,7 @@ class ChatStoreDB: NSObject {
             let lastMessage = getMessageBykeyIdOrGlobalId(keyId:-1,globalMsgId:message_id)
             conversation["lastMessage"] = lastMessage
         }
-       
+        
         let msgCount = sqlite3_column_int(queryStatement, 6)
         conversation["msgCount"] = msgCount
         let unreadMsgCount = sqlite3_column_int(queryStatement, 7)
@@ -161,13 +161,13 @@ class ChatStoreDB: NSObject {
         return message as NSDictionary
     }
     
-    func getConversationByKeyIdOrGlobalId(keyId:Int,chatId:String) -> NSDictionary?{
+    func getConversationByKeyIdOrGlobalId(keyId:Int,chatId:String?=nil) -> NSDictionary?{
         var queryStatement: OpaquePointer?
         var convsation:NSDictionary?
         // 1
         var queryStatementString="SELECT * FROM conversation WHERE conversation_id = \(keyId)"
         if(keyId == -1){
-            queryStatementString="SELECT * FROM conversation WHERE conversation_id = '\(chatId)'"
+            queryStatementString="SELECT * FROM conversation WHERE conversation_id = '\(chatId!)'"
         }
         if sqlite3_prepare_v2(db, queryStatementString, -1, &queryStatement, nil) ==
             SQLITE_OK {
@@ -187,13 +187,13 @@ class ChatStoreDB: NSObject {
         return convsation
     }
     
-    func getMessageBykeyIdOrGlobalId(keyId:Int,globalMsgId:String) -> NSDictionary?{
+    func getMessageBykeyIdOrGlobalId(keyId:Int,globalMsgId:String?=nil) -> NSDictionary?{
         var queryStatement: OpaquePointer?
         var message:NSDictionary?
         // 1
         var queryStatementString="SELECT * FROM message WHERE message_id = \(keyId)"
         if(keyId == -1){
-            queryStatementString="SELECT * FROM message WHERE message_id = '\(globalMsgId)'"
+            queryStatementString="SELECT * FROM message WHERE message_id = '\(globalMsgId!)'"
         }
         if sqlite3_prepare_v2(db, queryStatementString, -1, &queryStatement, nil) ==
             SQLITE_OK {
@@ -245,7 +245,7 @@ class ChatStoreDB: NSObject {
             var beside_ = ">=";
             if (prevOrNext) {
                 beside_ = "<=";
-                }
+            }
             queryStatementString = "select * from(select * from message where conversation_keyid = \(conversationKeyId) and local_date \(beside_) (select local_date from message where id = \(msgKeyId)) order by local_date desc, id desc limit \(count)) order by local_date, id"
         }
         var queryStatement: OpaquePointer?
@@ -310,7 +310,7 @@ class ChatStoreDB: NSObject {
         return execOk
     }
     
-    private func postNotifition(actName:String,data:Any){
+     func postNotifition(actName:String,data:Any){
         NotificationCenter.default.post(name: NSNotification.Name(rawValue:actName), object: data)
     }
     
@@ -351,7 +351,7 @@ class ChatStoreDB: NSObject {
                 content = dataInfo["fileName"] as! String
             }
             
-           
+            
             // 2
             sqlite3_bind_int(insertStatement, 1, Int32(convsationType))
             
@@ -414,27 +414,111 @@ class ChatStoreDB: NSObject {
         return execOk
     }
     
-    func updateMsgBody(globalMsgId:String,body:String) ->Bool {
-           var updateStatus = false
+    func messageRead(keyId:Int) -> Bool{
+        var updateStatus = false
+        let message = getMessageBykeyIdOrGlobalId(keyId:keyId)
         
-            updateStatus = updataData(sql:"UPDATE message SET json_data = '\(body)' where message_id = \(globalMsgId)")
-         
-           if(updateStatus){
-               //sendNotify
-               postNotifition(actName: "MessageStatusChangedNotify",data: getMessageBykeyIdOrGlobalId(keyId:-1,globalMsgId:globalMsgId))
-           }
-           return updateStatus
-       }
+        updateStatus = updataData(sql:"UPDATE message SET status = \(ChatModel.MessageStatus.STATUS_READ.rawValue), message_read = 1 where id = \(keyId)")
+        let isRead = message!["isRead"] as! Int
+        if(isRead == 0){
+            let conversationKeyId = message!["conversationKeyId"] as! Int
+            let conversion = getConversationByKeyIdOrGlobalId(keyId:conversationKeyId)
+            var unreadMsgCount = conversion!["unreadMsgCount"] as! Int
+            if(unreadMsgCount>0){
+                unreadMsgCount = unreadMsgCount - 1
+                updateStatus =  updataData(sql:"UPDATE conversation SET unread_message_count = \(unreadMsgCount) where id = \(conversationKeyId)")
+            }
+            
+        }
+        
+        if(updateStatus){
+            //sendNotify
+            postNotifition(actName: "MessageStatusChangedNotify",data: getMessageBykeyIdOrGlobalId(keyId:keyId))
+        }
+        return updateStatus
+    }
+    func conversationRead(keyId:Int) -> Bool {
+        var updateStatus = false
+        
+        updateStatus = updataData(sql:"UPDATE conversation SET unread_message_count = 0 where id = \(keyId)")
+        updateStatus = updataData(sql:"UPDATE message SET message_read = 1 where conversation_keyid = \(keyId)")
+        
+        if(updateStatus){
+            //sendNotify
+            postNotifition(actName: "ConversationStatusChangedNotify",data: getConversationByKeyIdOrGlobalId(keyId:keyId))
+        }
+        return updateStatus
+    }
+    
+    func updateMsgBody(globalMsgId:String,body:String) ->Bool {
+        var updateStatus = false
+        
+        updateStatus = updataData(sql:"UPDATE message SET json_data = '\(body)' where message_id = \(globalMsgId)")
+        
+        if(updateStatus){
+            //sendNotify
+            postNotifition(actName: "MessageStatusChangedNotify",data: getMessageBykeyIdOrGlobalId(keyId:-1,globalMsgId:globalMsgId))
+        }
+        return updateStatus
+    }
+    
+    func updateConversationBody(keyId:Int,body:String) ->Bool {
+        var updateStatus = false
+        
+        updateStatus = updataData(sql:"UPDATE conversation SET json_data = '\(body)' where id = \(keyId)")
+        
+        if(updateStatus){
+            //sendNotify
+            postNotifition(actName: "ConversationStatusChangedNotify",data: getConversationByKeyIdOrGlobalId(keyId:keyId))
+        }
+        return updateStatus
+    }
+    
+    func setConversationDraft(keyId:Int,draft:String) ->Bool {
+        var updateStatus = false
+        
+        updateStatus = updataData(sql:"UPDATE conversation SET content = '\(draft)' where id = \(keyId)")
+        
+        if(updateStatus){
+            //sendNotify
+            postNotifition(actName: "ConversationStatusChangedNotify",data: getConversationByKeyIdOrGlobalId(keyId:keyId))
+        }
+        return updateStatus
+    }
+    
+    func setConversationMute(keyId:Int,mute:Int) ->Bool {
+        var updateStatus = false
+        
+        updateStatus = updataData(sql:"UPDATE conversation SET set_top = \(mute) where id = \(keyId)")
+        
+        if(updateStatus){
+            //sendNotify
+            postNotifition(actName: "ConversationStatusChangedNotify",data: getConversationByKeyIdOrGlobalId(keyId:keyId))
+        }
+        return updateStatus
+    }
+    
+    func setConversationTopup(keyId:Int,topUp:Int) ->Bool {
+        var updateStatus = false
+        
+        updateStatus = updataData(sql:"UPDATE conversation SET set_top = \(topUp), set_top_time = '\(CLongLong(round(Date().timeIntervalSince1970*1000)))' where id = \(keyId)")
+        
+        if(updateStatus){
+            //sendNotify
+            postNotifition(actName: "ConversationStatusChangedNotify",data: getConversationByKeyIdOrGlobalId(keyId:keyId))
+        }
+        return updateStatus
+    }
     
     func updateMsgStatus(globalMsgId:String,status:Int,timestamp:String) ->Bool {
         var updateStatus = false
         
         if(timestamp.isEmpty){
-              updateStatus = updataData(sql:"UPDATE message SET status = \(status), local_date = \(timestamp), server_date = \(timestamp) where message_id = \(globalMsgId)")
+            updateStatus = updataData(sql:"UPDATE message SET status = \(status), local_date = \(timestamp), server_date = \(timestamp) where message_id = \(globalMsgId)")
         }else{
-              updateStatus = updataData(sql:"UPDATE message SET status = \(status) where message_id = \(globalMsgId)")
+            updateStatus = updataData(sql:"UPDATE message SET status = \(status) where message_id = \(globalMsgId)")
         }
-      
+        
         if(updateStatus){
             //sendNotify
             postNotifition(actName: "MessageStatusChangedNotify",data: getMessageBykeyIdOrGlobalId(keyId:-1,globalMsgId:globalMsgId))
@@ -492,12 +576,41 @@ class ChatStoreDB: NSObject {
         sqlite3_finalize(updateStatement)
         return true
     }
-    func deleteData(sql:String) {
+    
+    func deleteConversation(keyId: Int) -> Bool{
+        return deleteData(sql:"DELETE FROM conversation WHERE id = \(keyId);")
+    }
+    
+    func deleteMessage(msgKeyId: Int) -> Bool{
+        let message = getMessageBykeyIdOrGlobalId(keyId:msgKeyId)
+         var updateStatus = false
+         deleteData(sql:"DELETE FROM message WHERE id = \(msgKeyId);")
+        let conversationKeyId = message!["conversationKeyId"] as! Int
+        let messages = getMessages(conversationKeyId:conversationKeyId,msgKeyId:-1,count:1,prevOrNext:false)
+        if (messages != nil && messages.count > 0 ) {
+            let message_id = messages[0]["messageId"] as! String
+            updateStatus = updataData(sql:"UPDATE conversation SET message_id = '\(message_id)' where id = \(conversationKeyId)")
+        }else{
+            updateStatus = updataData(sql:"UPDATE conversation SET message_id = '-1' where id = \(conversationKeyId)")
+        }
+        return updateStatus
+    }
+    
+    func deleteAllMessages(conversationKeyId: Int) -> Bool{
+         var updateStatus = false
+        updateStatus = deleteData(sql:"DELETE FROM message WHERE conversation_keyid = \(conversationKeyId);")
+        updateStatus = updataData(sql:"UPDATE conversation SET message_id = '-1' where id = \(conversationKeyId)")
+        return updateStatus
+    }
+    
+    func deleteData(sql:String) -> Bool{
         
         if execSql(sql: sql) {
             print("删除成功")
+            return true
         }else{
             print("删除失败")
+            return false
         }
     }
     
