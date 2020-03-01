@@ -16,8 +16,7 @@ class MessageEncryptHelper{
          func decrypt(_ userId:String,_ encryptMsg:String) ->String{
            
            
-            return ""
-
+            return Signal.decryptMessage(encryptMsg: encryptMsg,senderName:userId)
         }
         
   
@@ -25,7 +24,10 @@ class MessageEncryptHelper{
          func encrypt(_ senderId:String,_ receiverId:String, _ content:String) -> String{
               
               
-            return Signal.encryptMessage(currentUser: senderId,receiverName: receiverId,orignalMsg: content)
+            let encryptMsg = Signal.encryptMessage(currentUser: senderId,receiverName: receiverId,orignalMsg: content)
+            let test = decrypt(senderId,encryptMsg);
+            print("\(test)");
+            return encryptMsg;
 
         }
     
