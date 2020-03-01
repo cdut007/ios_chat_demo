@@ -8,8 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		041462EA24053C5900C4D152 /* ChatModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041462E924053C5900C4D152 /* ChatModel.swift */; };
-		041462EC240548CB00C4D152 /* ChatStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041462EB240548CB00C4D152 /* ChatStore.swift */; };
 		041462EE240555D900C4D152 /* MessageEncrptHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041462ED240555D900C4D152 /* MessageEncrptHelper.swift */; };
+		041462F32409812F00C4D152 /* SignalProtocol.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04E2469423C5ADF50054F441 /* SignalProtocol.framework */; };
+		041462F42409812F00C4D152 /* SignalProtocol.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 04E2469423C5ADF50054F441 /* SignalProtocol.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		041462F6240981EB00C4D152 /* ChatStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041462F5240981EA00C4D152 /* ChatStore.swift */; };
 		04E2465D23C30AFF0054F441 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E2465C23C30AFF0054F441 /* AppDelegate.swift */; };
 		04E2465F23C30AFF0054F441 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E2465E23C30AFF0054F441 /* SceneDelegate.swift */; };
 		04E2466123C30AFF0054F441 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E2466023C30AFF0054F441 /* ViewController.swift */; };
@@ -21,24 +23,6 @@
 		04E2468E23C30B8B0054F441 /* TigaseSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04E2468D23C30B8B0054F441 /* TigaseSwift.framework */; };
 		04E2468F23C30B8B0054F441 /* TigaseSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 04E2468D23C30B8B0054F441 /* TigaseSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		04E2469323C30DAE0054F441 /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 04E2469123C30C6F0054F441 /* libresolv.tbd */; };
-		04E2469823C5B1510054F441 /* CustomKeyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E2469723C5B1510054F441 /* CustomKeyStore.swift */; };
-		04E2469F23C5B2060054F441 /* TestSenderKeyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E2469923C5B2050054F441 /* TestSenderKeyStore.swift */; };
-		04E246A023C5B2060054F441 /* SignalSenderKeyName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E2469A23C5B2050054F441 /* SignalSenderKeyName.swift */; };
-		04E246A123C5B2060054F441 /* TestPreKeyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E2469B23C5B2060054F441 /* TestPreKeyStore.swift */; };
-		04E246A223C5B2060054F441 /* TestIdentityStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E2469C23C5B2060054F441 /* TestIdentityStore.swift */; };
-		04E246A323C5B2060054F441 /* TestSessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E2469D23C5B2060054F441 /* TestSessionStore.swift */; };
-		04E246A423C5B2060054F441 /* SignalAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E2469E23C5B2060054F441 /* SignalAddress.swift */; };
-		04E246A623C5B2BF0054F441 /* TestSignedPreKeyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E246A523C5B2BF0054F441 /* TestSignedPreKeyStore.swift */; };
-		04E246BA23C5C2780054F441 /* SignalProtocol.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04E2469423C5ADF50054F441 /* SignalProtocol.framework */; };
-		04E246BB23C5C2780054F441 /* SignalProtocol.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 04E2469423C5ADF50054F441 /* SignalProtocol.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		04E246C023C5EAC90054F441 /* SwiftProtobuf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04E246BC23C5EAC70054F441 /* SwiftProtobuf.framework */; };
-		04E246C123C5EAC90054F441 /* SwiftProtobuf.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 04E246BC23C5EAC70054F441 /* SwiftProtobuf.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		04E246C223C5EAC90054F441 /* CommonCryptoModule.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04E246BD23C5EAC80054F441 /* CommonCryptoModule.framework */; };
-		04E246C323C5EAC90054F441 /* CommonCryptoModule.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 04E246BD23C5EAC80054F441 /* CommonCryptoModule.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		04E246C423C5EAC90054F441 /* Pods_LibSignalProtocolSwift_SignalProtocol_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04E246BE23C5EAC80054F441 /* Pods_LibSignalProtocolSwift_SignalProtocol_iOS.framework */; };
-		04E246C523C5EAC90054F441 /* Pods_LibSignalProtocolSwift_SignalProtocol_iOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 04E246BE23C5EAC80054F441 /* Pods_LibSignalProtocolSwift_SignalProtocol_iOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		04E246C623C5EAC90054F441 /* Curve25519.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04E246BF23C5EAC80054F441 /* Curve25519.framework */; };
-		04E246C723C5EAC90054F441 /* Curve25519.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 04E246BF23C5EAC80054F441 /* Curve25519.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,12 +49,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				04E246C323C5EAC90054F441 /* CommonCryptoModule.framework in Embed Frameworks */,
-				04E246BB23C5C2780054F441 /* SignalProtocol.framework in Embed Frameworks */,
-				04E246C123C5EAC90054F441 /* SwiftProtobuf.framework in Embed Frameworks */,
-				04E246C523C5EAC90054F441 /* Pods_LibSignalProtocolSwift_SignalProtocol_iOS.framework in Embed Frameworks */,
+				041462F42409812F00C4D152 /* SignalProtocol.framework in Embed Frameworks */,
 				04E2468F23C30B8B0054F441 /* TigaseSwift.framework in Embed Frameworks */,
-				04E246C723C5EAC90054F441 /* Curve25519.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -79,8 +59,8 @@
 
 /* Begin PBXFileReference section */
 		041462E924053C5900C4D152 /* ChatModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatModel.swift; sourceTree = "<group>"; };
-		041462EB240548CB00C4D152 /* ChatStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatStore.swift; sourceTree = "<group>"; };
 		041462ED240555D900C4D152 /* MessageEncrptHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageEncrptHelper.swift; sourceTree = "<group>"; };
+		041462F5240981EA00C4D152 /* ChatStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatStore.swift; sourceTree = "<group>"; };
 		04E2465923C30AFF0054F441 /* chatDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = chatDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		04E2465C23C30AFF0054F441 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		04E2465E23C30AFF0054F441 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -98,18 +78,6 @@
 		04E2468D23C30B8B0054F441 /* TigaseSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = TigaseSwift.framework; sourceTree = "<group>"; };
 		04E2469123C30C6F0054F441 /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
 		04E2469423C5ADF50054F441 /* SignalProtocol.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SignalProtocol.framework; sourceTree = "<group>"; };
-		04E2469723C5B1510054F441 /* CustomKeyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomKeyStore.swift; sourceTree = "<group>"; };
-		04E2469923C5B2050054F441 /* TestSenderKeyStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestSenderKeyStore.swift; sourceTree = "<group>"; };
-		04E2469A23C5B2050054F441 /* SignalSenderKeyName.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignalSenderKeyName.swift; sourceTree = "<group>"; };
-		04E2469B23C5B2060054F441 /* TestPreKeyStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestPreKeyStore.swift; sourceTree = "<group>"; };
-		04E2469C23C5B2060054F441 /* TestIdentityStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestIdentityStore.swift; sourceTree = "<group>"; };
-		04E2469D23C5B2060054F441 /* TestSessionStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestSessionStore.swift; sourceTree = "<group>"; };
-		04E2469E23C5B2060054F441 /* SignalAddress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignalAddress.swift; sourceTree = "<group>"; };
-		04E246A523C5B2BF0054F441 /* TestSignedPreKeyStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestSignedPreKeyStore.swift; sourceTree = "<group>"; };
-		04E246BC23C5EAC70054F441 /* SwiftProtobuf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SwiftProtobuf.framework; sourceTree = "<group>"; };
-		04E246BD23C5EAC80054F441 /* CommonCryptoModule.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CommonCryptoModule.framework; sourceTree = "<group>"; };
-		04E246BE23C5EAC80054F441 /* Pods_LibSignalProtocolSwift_SignalProtocol_iOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Pods_LibSignalProtocolSwift_SignalProtocol_iOS.framework; sourceTree = "<group>"; };
-		04E246BF23C5EAC80054F441 /* Curve25519.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Curve25519.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,11 +86,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				04E2468E23C30B8B0054F441 /* TigaseSwift.framework in Frameworks */,
-				04E246C223C5EAC90054F441 /* CommonCryptoModule.framework in Frameworks */,
-				04E246C623C5EAC90054F441 /* Curve25519.framework in Frameworks */,
-				04E246C023C5EAC90054F441 /* SwiftProtobuf.framework in Frameworks */,
-				04E246BA23C5C2780054F441 /* SignalProtocol.framework in Frameworks */,
-				04E246C423C5EAC90054F441 /* Pods_LibSignalProtocolSwift_SignalProtocol_iOS.framework in Frameworks */,
+				041462F32409812F00C4D152 /* SignalProtocol.framework in Frameworks */,
 				04E2469323C30DAE0054F441 /* libresolv.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -168,22 +132,14 @@
 		04E2465B23C30AFF0054F441 /* chatDemo */ = {
 			isa = PBXGroup;
 			children = (
-				04E2469E23C5B2060054F441 /* SignalAddress.swift */,
-				04E2469A23C5B2050054F441 /* SignalSenderKeyName.swift */,
-				041462EB240548CB00C4D152 /* ChatStore.swift */,
-				04E2469C23C5B2060054F441 /* TestIdentityStore.swift */,
-				04E2469B23C5B2060054F441 /* TestPreKeyStore.swift */,
-				04E2469923C5B2050054F441 /* TestSenderKeyStore.swift */,
-				04E2469D23C5B2060054F441 /* TestSessionStore.swift */,
-				04E246A523C5B2BF0054F441 /* TestSignedPreKeyStore.swift */,
 				04E2465C23C30AFF0054F441 /* AppDelegate.swift */,
+				041462F5240981EA00C4D152 /* ChatStore.swift */,
 				04E2465E23C30AFF0054F441 /* SceneDelegate.swift */,
 				04E2466023C30AFF0054F441 /* ViewController.swift */,
 				04E2466223C30AFF0054F441 /* Main.storyboard */,
 				04E2466523C30B010054F441 /* Assets.xcassets */,
 				04E2466723C30B010054F441 /* LaunchScreen.storyboard */,
 				04E2466A23C30B010054F441 /* Info.plist */,
-				04E2469723C5B1510054F441 /* CustomKeyStore.swift */,
 				041462E924053C5900C4D152 /* ChatModel.swift */,
 				041462ED240555D900C4D152 /* MessageEncrptHelper.swift */,
 			);
@@ -211,10 +167,6 @@
 		04E2468C23C30B8B0054F441 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				04E246BD23C5EAC80054F441 /* CommonCryptoModule.framework */,
-				04E246BF23C5EAC80054F441 /* Curve25519.framework */,
-				04E246BE23C5EAC80054F441 /* Pods_LibSignalProtocolSwift_SignalProtocol_iOS.framework */,
-				04E246BC23C5EAC70054F441 /* SwiftProtobuf.framework */,
 				04E2469423C5ADF50054F441 /* SignalProtocol.framework */,
 				04E2469123C30C6F0054F441 /* libresolv.tbd */,
 				04E2468D23C30B8B0054F441 /* TigaseSwift.framework */,
@@ -354,19 +306,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				04E2469823C5B1510054F441 /* CustomKeyStore.swift in Sources */,
-				04E246A323C5B2060054F441 /* TestSessionStore.swift in Sources */,
-				04E246A423C5B2060054F441 /* SignalAddress.swift in Sources */,
-				04E246A223C5B2060054F441 /* TestIdentityStore.swift in Sources */,
 				04E2466123C30AFF0054F441 /* ViewController.swift in Sources */,
-				041462EC240548CB00C4D152 /* ChatStore.swift in Sources */,
 				04E2465D23C30AFF0054F441 /* AppDelegate.swift in Sources */,
-				04E246A623C5B2BF0054F441 /* TestSignedPreKeyStore.swift in Sources */,
-				04E246A123C5B2060054F441 /* TestPreKeyStore.swift in Sources */,
+				041462F6240981EB00C4D152 /* ChatStore.swift in Sources */,
 				041462EE240555D900C4D152 /* MessageEncrptHelper.swift in Sources */,
 				04E2465F23C30AFF0054F441 /* SceneDelegate.swift in Sources */,
-				04E2469F23C5B2060054F441 /* TestSenderKeyStore.swift in Sources */,
-				04E246A023C5B2060054F441 /* SignalSenderKeyName.swift in Sources */,
 				041462EA24053C5900C4D152 /* ChatModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

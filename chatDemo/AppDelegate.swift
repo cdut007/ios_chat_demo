@@ -22,14 +22,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let status = notification.object as! NSDictionary
         if "connected" == status["status"] as! String
         {
-            let text = "test111";
+            let text = "88uuu测试是颠三倒四的芬芳俄方分身乏术发顺丰fiefs法人身份染发焚膏继晷你快给你家那个谁";
                                        let content = "{\"messageType\":\"TextMessage\",\"messageTypeValue\":1,\"data\":{\"content\":\""+text+"\"},\"messageEncrypt\":\"true\",\"peerInfo\":{\"userName\":\"\",\"mobile\":\"\",\"nickName\":\"\"}}";
 //            self.chatModel.sendCustomMessage(chatId:"private-chat-e72d0bed-54f9-4e00-b295-e9a4f482842e", jsonData:content,conversationType: ChatModel.ConversationType.GROUP_CHAT.rawValue);
           
-//                                       self.chatModel.sendCustomMessage(chatId:"zq30695873350b443bbc992c691e525201", jsonData:content,conversationType: ChatModel.ConversationType.SINGLE_CHAT.rawValue);
+                                       self.chatModel.sendCustomMessage(chatId:"zq30695873350b443bbc992c691e525201", jsonData:content,conversationType: ChatModel.ConversationType.SINGLE_CHAT.rawValue);
 //              self.chatModel.kickGroupMember(chatId: "private-chat-e72d0bed-54f9-4e00-b295-e9a4f482842e", memberId: "zqe04443e1010b41e7b254f0d9fb527933")
          //   self.chatModel.joinGroup(chatId: "private-chat-e72d0bed-54f9-4e00-b295-e9a4f482842e")
-            self.chatModel.inviteToGroup(chatId: "private-chat-e72d0bed-54f9-4e00-b295-e9a4f482842e",memberId:"zq30695873350b443bbc992c691e525201")
+//            self.chatModel.inviteToGroup(chatId: "private-chat-e72d0bed-54f9-4e00-b295-e9a4f482842e",memberId:"zq30695873350b443bbc992c691e525201")
         }
    }
 
@@ -39,7 +39,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(self.methodOfReceivedNotification(notification:)), name: Notification.Name("LoginStatusChangedNotify"), object: nil)
         
         chatModel.encrypt=true
-        chatModel.login(userId: "zqe04443e1010b41e7b254f0d9fb527933", token: "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpZCI6InpxZTA0NDQzZTEwMTBiNDFlN2IyNTRmMGQ5ZmI1Mjc5MzMiLCJ0eXBlIjoidXNlciIsImV4cCI6MTU4Mjk4Nzc2NSwiaWF0IjoxNTgyOTAxMzY1fQ.swUIP7e9Orx1MXX3ryPhvUK9stmGdGMwgOa4G05yS20", imHost: "47.94.10.136", imPort: 5221, domain: "ul");
+        chatModel.login(userId: "zqe04443e1010b41e7b254f0d9fb527933", token: "Bearer eyJhbGciOiJIUzI1NiJ9.eyJpZCI6InpxZTA0NDQzZTEwMTBiNDFlN2IyNTRmMGQ5ZmI1Mjc5MzMiLCJ0eXBlIjoidXNlciIsImV4cCI6MTU4MzEyNjM5OCwiaWF0IjoxNTgzMDM5OTk4fQ.zDP3DeiNyUFXm63QoxMrAeY9VSXlB49JbyNPM9xzIhQ", imHost: "47.94.10.136", imPort: 5221, domain: "ul");
         let conversations = chatModel.getAllConversations()
         if(conversations.count>0)
         {

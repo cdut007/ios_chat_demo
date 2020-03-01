@@ -162,7 +162,7 @@ class ChatModel:NSObject {
             print("Sending message to", recipient, ".."+chatId);
             if(encrypt){
                 mechanism = "encrypt"
-                body = messageEncryptHelper.encrypt(chatId,userId,jsonData);
+                body = messageEncryptHelper.encrypt(userId,chatId,jsonData);
             }
             _ = messageModule.sendMessage(in: chat!, body: body,mechanism: mechanism,session: session,uuid:globalMsgId);
         }
