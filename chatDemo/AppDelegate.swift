@@ -26,7 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                        let content = "{\"messageType\":\"TextMessage\",\"messageTypeValue\":1,\"data\":{\"content\":\""+text+"\"},\"messageEncrypt\":\"true\",\"peerInfo\":{\"userName\":\"\",\"mobile\":\"\",\"nickName\":\"\"}}";
 //            self.chatModel.sendCustomMessage(chatId:"private-chat-e72d0bed-54f9-4e00-b295-e9a4f482842e", jsonData:content,conversationType: ChatModel.ConversationType.GROUP_CHAT.rawValue);
           
-                                       self.chatModel.sendCustomMessage(chatId:"zq30695873350b443bbc992c691e525201", jsonData:content,conversationType: ChatModel.ConversationType.SINGLE_CHAT.rawValue);
+//                                       self.chatModel.sendCustomMessage(chatId:"zq30695873350b443bbc992c691e525201", jsonData:content,conversationType: ChatModel.ConversationType.SINGLE_CHAT.rawValue);
 //              self.chatModel.kickGroupMember(chatId: "private-chat-e72d0bed-54f9-4e00-b295-e9a4f482842e", memberId: "zqe04443e1010b41e7b254f0d9fb527933")
          //   self.chatModel.joinGroup(chatId: "private-chat-e72d0bed-54f9-4e00-b295-e9a4f482842e")
 //            self.chatModel.inviteToGroup(chatId: "private-chat-e72d0bed-54f9-4e00-b295-e9a4f482842e",memberId:"zq30695873350b443bbc992c691e525201")

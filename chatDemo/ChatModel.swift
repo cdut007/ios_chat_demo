@@ -370,14 +370,15 @@ class ChatModel:NSObject {
                 if  session == nil {
                     session = ""
                 }
+                var body = message.body ?? "";
                 if message.mechanism != nil {
-                    message.body = _chatModel.messageEncryptHelper.decrypt(_chatModel.userId, message.body!)
+                    body = _chatModel.messageEncryptHelper.decrypt(_chatModel.userId, message.body!)
                 }
                 
-                if(message.body == nil || message.body!.isEmpty){
+                if(body.isEmpty){
                     return
                 }
-                ChatStoreDB.shareInstence().createNewMsg(chatId: from+session!, from: from, to: to, globalMsgId: message.id!,  jsonData: message.body!, convsationType: conversationType, errorInfo: "")
+                ChatStoreDB.shareInstence().createNewMsg(chatId: from+session!, from: from, to: to, globalMsgId: message.id!,  jsonData: body, convsationType: conversationType, errorInfo: "")
             }
             
             func messageMucReceived(_ mr: MucModule.MessageReceivedEvent) {

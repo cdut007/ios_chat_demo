@@ -25,8 +25,7 @@ class MessageEncryptHelper{
               
               
             let encryptMsg = Signal.encryptMessage(currentUser: senderId,receiverName: receiverId,orignalMsg: content)
-            let test = decrypt(senderId,encryptMsg);
-            print("\(test)");
+           
             return encryptMsg;
 
         }
