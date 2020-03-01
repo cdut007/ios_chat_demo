@@ -974,8 +974,8 @@
             filePath = "../../../Downloads/libsignal-protocol-swift-master/libsignal-protocol-swift/Setup/encrypt_common.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1028"
-            endingLineNumber = "1028"
+            startingLineNumber = "1029"
+            endingLineNumber = "1029"
             landmarkName = "setup_crypto_provider2(context)"
             landmarkType = "9">
          </BreakpointContent>
